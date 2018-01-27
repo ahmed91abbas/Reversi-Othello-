@@ -83,6 +83,7 @@ public class Reversi {
 		buttons.put(name, button);
 		button.setPreferredSize(new Dimension(40, 40));
 		button.setBackground(Color.green);
+		button.setOpaque(true);
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
