@@ -24,6 +24,9 @@ public class Reversi {
 	private boolean allowAllMoves;
 	private boolean whiteHasMoves;
 	private boolean blackHasMoves;
+	private Player p1;
+	private Player p2;
+	private boolean gameOver;
 	
 	public Reversi() {
 		turnCount = 0;
@@ -37,6 +40,9 @@ public class Reversi {
 		allowAllMoves = false;
 		whiteHasMoves = false;
 		blackHasMoves = false;
+		gameOver = false;
+		p1 = null;
+		p2 = null;
 	}
 
 	public void allowAllMoves(boolean state){
@@ -61,10 +67,22 @@ public class Reversi {
 				nextPlayer = "black";
 				break;
 			}
-			System.out.println("Next is: " + nextPlayer + " (Black discs = " + blackDiscs + ", White discs = " + whiteDiscs + ")");
-			turnCount++;
-			updateAvailableMoves();
+			
 			if (turnCount >= 64) {
+				nextPlayer = "none";
+				gameOver = true;
+			}
+			
+			System.out.println("Next is: " + nextPlayer + " (Black discs = " + blackDiscs + ", White discs = " + whiteDiscs + ")");
+			
+			turnCount++;
+			
+			if (turnCount >= 64) {
+				clearAvailableMoves();
+				gameOver = true;
+			}
+			
+			if (gameOver) {
 				if (blackDiscs > whiteDiscs) {
 					System.out.println("\nThe winner is BLACK!");
 				} else if (whiteDiscs > blackDiscs) {
@@ -75,6 +93,16 @@ public class Reversi {
 				System.out.println("Black scored " + blackDiscs + " points.");
 				System.out.println("White scored " + whiteDiscs + " points.");
 			}
+			
+			if (!allowAllMoves && !gameOver) {
+				updateAvailableMoves();
+				if (nextPlayer.equals("black") && p1 != null) {
+					p1.makeMove(availableMoves);
+				} else if (nextPlayer.equals("white") && p2 != null) {
+					p2.makeMove(availableMoves);
+				}
+			}	
+			
 		} 
 	}
 
@@ -160,12 +188,16 @@ public class Reversi {
 		}
 	}
 	
-	public void updateAvailableMoves() {
+	public void clearAvailableMoves() {
 		for (int i = 0; i < availableMoves.size(); i++) {
 			JButton button = buttons.get(availableMoves.get(i));
 			button.setText("");
 		}
 		availableMoves.clear();
+	}
+	
+	public void updateAvailableMoves() {
+		clearAvailableMoves();
 		int playerID = turnCount % 2;
 		HashMap<String, Disc> player = null;
 		switch(playerID) {
@@ -199,16 +231,21 @@ public class Reversi {
 				System.out.println("\nThe winner is " + winner);
 				System.out.println("Black scored " + black.size() + " points.");
 				System.out.println("White scored " + white.size() + " points.");
+				gameOver = true;
 			} else if (playerID == 0) {
 				blackHasMoves = false;
 				System.out.println("\nPlayer Black has no available moves! Switching turns");
+				System.out.println("Next is: white (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
 				turnCount++;
 				updateAvailableMoves();
+				triggerMove(p2);
 			} else if (playerID == 1) {
 				whiteHasMoves = false;
 				System.out.println("\nPlayer White has no available moves! Switching turns");
+				System.out.println("Next is: black (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
 				turnCount++;
 				updateAvailableMoves();
+				triggerMove(p1);
 			}
 		}
 	}
@@ -292,6 +329,20 @@ public class Reversi {
 			return true;
 		return false;
 	}
+	
+	public void blackPlayer(Player p1) {
+		this.p1 = p1;
+	}
+	
+	public void whitePlayer(Player p2) {
+		this.p2 = p2;
+	}
+	
+	public void triggerMove(Player p) {
+		updateAvailableMoves();
+		if (p != null)
+			p.makeMove(availableMoves);
+	}
 
 	public static void main(String[] args) {
 		Reversi reversi = new Reversi();
@@ -302,6 +353,10 @@ public class Reversi {
 		reversi.makeMove("e4");
 		reversi.makeMove("d4");
 		reversi.allowAllMoves(false);
+		Player p1 = new RandomPlays(reversi);
+		Player p2 = new RandomPlays(reversi);
+		reversi.blackPlayer(p1);
+		reversi.whitePlayer(p2);
+		reversi.triggerMove(p1);
 	}
-
 }
