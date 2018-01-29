@@ -71,19 +71,16 @@ public class Reversi {
 				break;
 			}
 			
-			if (turnCount >= 64) {
-				nextPlayer = "none";
-				gameOver = true;
-			}
-			
-			System.out.println("Next is: " + nextPlayer + " (Black discs = " + blackDiscs + ", White discs = " + whiteDiscs + ")");
-			
-			turnCount++;
-			
-			if (turnCount >= 64) {
+			if (blackDiscs + whiteDiscs == 64) {
 				clearAvailableMoves();
 				gameOver = true;
 			}
+			
+			if (!gameOver)
+				System.out.println("Next is: " + nextPlayer + " (Black discs = " + blackDiscs + ", White discs = " + whiteDiscs + ")");
+			
+			turnCount++;
+			
 			
 			if (gameOver) {
 				if (blackDiscs > whiteDiscs) {
@@ -99,9 +96,9 @@ public class Reversi {
 			
 			if (!allowAllMoves && !gameOver) {
 				updateAvailableMoves();
-				if (nextPlayer.equals("black") && p1 != null) {
+				if (nextPlayer.equals("black") && p1 != null && blackHasMoves) {
 					p1.makeMove(availableMoves);
-				} else if (nextPlayer.equals("white") && p2 != null) {
+				} else if (nextPlayer.equals("white") && p2 != null && whiteHasMoves) {
 					p2.makeMove(availableMoves);
 				}
 			}	
@@ -227,7 +224,7 @@ public class Reversi {
 				case 0: blackHasMoves = true; break;
 				case 1: whiteHasMoves = true; break;
 			}
-		} else if(!allowAllMoves && turnCount < 64) {
+		} else if(!allowAllMoves && !gameOver) {
 			if (!whiteHasMoves && !blackHasMoves) {
 				System.out.println("\nThe game has finished because both players has no available moves left!");
 				String winner = black.size() > white.size() ? "BLACK" : "WHITE";
