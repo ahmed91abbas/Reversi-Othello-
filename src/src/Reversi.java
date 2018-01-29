@@ -9,7 +9,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -237,14 +240,12 @@ public class Reversi {
 				System.out.println("\nPlayer Black has no available moves! Switching turns");
 				System.out.println("Next is: white (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
 				turnCount++;
-				updateAvailableMoves();
 				triggerMove(p2);
 			} else if (playerID == 1) {
 				whiteHasMoves = false;
 				System.out.println("\nPlayer White has no available moves! Switching turns");
 				System.out.println("Next is: black (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
 				turnCount++;
-				updateAvailableMoves();
 				triggerMove(p1);
 			}
 		}
@@ -344,19 +345,81 @@ public class Reversi {
 			p.makeMove(availableMoves);
 	}
 
+	public static void start() {
+		JDialog dialog = new JDialog();
+		dialog.setLocationRelativeTo(null);
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.setTitle("Reversi start menu");
+		JPanel[] panelList = new JPanel[4];
+		Font font = new Font("Serif", Font.PLAIN, 30);
+		for (int i = 0; i < panelList.length; i++) {
+			panelList[i] = new JPanel();
+			panelList[i].setBackground(Color.decode("#E6CFB8"));
+		}
+		JLabel startLabel = new JLabel("*Choose players*");
+		startLabel.setFont(font);
+		panelList[0].add(startLabel);
+		JLabel blackPlayerLabel = new JLabel("Black discs ");
+		blackPlayerLabel.setFont(font);
+		String[] players = new String[] {"Human", "Random plays", "AI"};
+		JComboBox<String> box1 = new JComboBox<String>(players);
+		box1.setFont(font);
+		panelList[1].add(blackPlayerLabel);
+		panelList[1].add(box1);
+		JLabel whitePlayerLabel = new JLabel("White discs ");
+		whitePlayerLabel.setFont(font);
+		JComboBox<String> box2 = new JComboBox<String>(players);
+		box2.setFont(font);
+		panelList[2].add(whitePlayerLabel);
+		panelList[2].add(box2);
+		JButton startButton = new JButton("Start");
+		startButton.setFont(font);
+		startButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					dialog.dispose();
+					Player p1 = null;
+					Player p2 = null;
+					String player1 = (String) box1.getSelectedItem();
+					String player2 = (String) box2.getSelectedItem();
+					Reversi reversi = new Reversi();
+					reversi.createField();
+					reversi.allowAllMoves(true);
+					reversi.makeMove("d5");
+					reversi.makeMove("e5");
+					reversi.makeMove("e4");
+					reversi.makeMove("d4");
+					reversi.allowAllMoves(false);
+					if (player1.equals("Random plays")) {
+						p1 = new RandomPlays(reversi);						
+					} else if (player1.equals("AI")) {
+						//TODO
+					}
+					if (player2.equals("Random plays")) {
+						p2 = new RandomPlays(reversi);						
+					} else if (player2.equals("AI")) {
+						//TODO
+					}
+					reversi.blackPlayer(p1);
+					reversi.whitePlayer(p2);
+					reversi.triggerMove(p1);
+				} catch (Exception e) {
+					start();
+				}
+			}			
+		});
+		panelList[3].add(startButton);
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(4,1));
+		for (int i = 0; i < panelList.length; i++)
+			panel.add(panelList[i]);
+		dialog.add(panel);
+		dialog.pack();
+		dialog.setVisible(true);
+	}
+	
 	public static void main(String[] args) {
-		Reversi reversi = new Reversi();
-		reversi.createField();
-		reversi.allowAllMoves(true);
-		reversi.makeMove("d5");
-		reversi.makeMove("e5");
-		reversi.makeMove("e4");
-		reversi.makeMove("d4");
-		reversi.allowAllMoves(false);
-		Player p1 = new RandomPlays(reversi);
-		Player p2 = new RandomPlays(reversi);
-		reversi.blackPlayer(p1);
-		reversi.whitePlayer(p2);
-		reversi.triggerMove(p1);
+		start();
 	}
 }
