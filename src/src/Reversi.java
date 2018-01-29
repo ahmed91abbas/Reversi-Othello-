@@ -115,7 +115,9 @@ public class Reversi {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				makeMove(name);
+				int playerID = turnCount % 2;
+				if ((playerID == 0 && p1 == null) || (playerID == 1 && p2 == null))
+					makeMove(name);
 			}
 		});
 		return button;
