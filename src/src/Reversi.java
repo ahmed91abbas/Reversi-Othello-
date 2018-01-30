@@ -29,7 +29,8 @@ public class Reversi {
 	private boolean blackHasMoves;
 	private Player p1;
 	private Player p2;
-	private boolean gameOver;
+	protected boolean gameOver;
+	private ArrayList<Move> movesMade;
 	
 	public Reversi() {
 		turnCount = 0;
@@ -46,6 +47,23 @@ public class Reversi {
 		gameOver = false;
 		p1 = null;
 		p2 = null;
+		movesMade = new ArrayList<Move>();
+	}
+	
+	public Reversi(Reversi original) {
+		turnCount = original.turnCount;
+		letters = original.letters;
+		field = original.field;
+		black = original.black;
+		white = original.white;
+		buttons = original.buttons;
+		availableMoves = original.availableMoves;
+		allowAllMoves = original.allowAllMoves;
+		whiteHasMoves = original.whiteHasMoves;
+		blackHasMoves = original.blackHasMoves;
+		gameOver = original.gameOver;
+		p1 = original.p1;
+		p2 = original.p2;
 	}
 
 	public void allowAllMoves(boolean state){
@@ -271,7 +289,7 @@ public class Reversi {
 		}
 	}
 	
-	private void update(Disc core, int addToX, int addToY){
+	private ArrayList<String> update(Disc core, int addToX, int addToY){
 		ArrayList<String> discsToFlip = new ArrayList<String>();
 		int x = core.getX() + addToX;
 		int y = core.getY() + addToY;
@@ -293,17 +311,20 @@ public class Reversi {
 		}
 		if(flip)
 			flipDiscs(discsToFlip);
+		return discsToFlip;
 	}
 	
-	public void updateBoard(Disc core) {
-		update(core, 1, 0); //down
-		update(core, -1, 0); //up
-		update(core, 0, 1); //right
-		update(core, 0, -1); //left
-		update(core, 1, 1); //down right
-		update(core, -1, -1); //up left
-		update(core, -1, 1); //down left
-		update(core, 1, -1); //up right 
+	public ArrayList<String> updateBoard(Disc core) {
+		ArrayList<String> flippedDiscs = new ArrayList<String>();
+		flippedDiscs.addAll(update(core, 1, 0)); //down
+		flippedDiscs.addAll(update(core, -1, 0)); //up
+		flippedDiscs.addAll(update(core, 0, 1)); //right
+		flippedDiscs.addAll(update(core, 0, -1)); //left
+		flippedDiscs.addAll(update(core, 1, 1)); //down right
+		flippedDiscs.addAll(update(core, -1, -1)); //up left
+		flippedDiscs.addAll(update(core, -1, 1)); //down left
+		flippedDiscs.addAll(update(core, 1, -1)); //up right 
+		return flippedDiscs;
 	}
 
 	public boolean addDisc(String name, int playerID) {
@@ -317,7 +338,8 @@ public class Reversi {
 			} else {
 				white.put(name, n);
 			}
-			updateBoard(n);
+			ArrayList<String> flippedDiscs = updateBoard(n);
+			movesMade.add(new Move(name, flippedDiscs));
 			return true;
 		}
 	}
@@ -344,6 +366,41 @@ public class Reversi {
 			p.makeMove(availableMoves);
 	}
 
+	public int getNbrOfBlack() {
+		return black.size();
+	}
+	
+	public int getNbrOfWhite() {
+		return white.size();
+	}
+	
+	public ArrayList<String> getAvailableMoves() {
+		return availableMoves;
+	}
+	
+	private void removeLastMove() { //TODO
+		int index = movesMade.size() - 1;
+		Move move = movesMade.remove(index);
+		field.remove(move.name);
+		JButton button = buttons.get(move.name);
+		button.setBackground(Color.GREEN);
+		flipDiscs(move.flippedDiscs);
+	}
+	
+	public void revert(String move) {
+		Move m = new Move(move, null);
+		if (movesMade.contains(m)) {
+			String lastMove = movesMade.get(movesMade.size() - 1).name;
+			while (!lastMove.equals(move)) {
+				removeLastMove();
+				lastMove = movesMade.get(movesMade.size() - 1).name;
+			}
+			removeLastMove();
+		} else {
+			System.out.println(move + " is not a move that has been made!");
+		}
+	}
+	
 	public static void start() {
 		JDialog dialog = new JDialog();
 		dialog.setLocationRelativeTo(null);
@@ -389,16 +446,18 @@ public class Reversi {
 					reversi.makeMove("e5");
 					reversi.makeMove("e4");
 					reversi.makeMove("d4");
+					reversi.makeMove("d3");
+					reversi.revert("d3");
 					reversi.allowAllMoves(false);
 					if (player1.equals("Random plays")) {
 						p1 = new RandomPlays(reversi);						
 					} else if (player1.equals("AI")) {
-						//TODO
+						p1 = new AI(reversi, 1);
 					}
 					if (player2.equals("Random plays")) {
 						p2 = new RandomPlays(reversi);						
 					} else if (player2.equals("AI")) {
-						//TODO
+						p2 = new AI(reversi, 1);
 					}
 					reversi.blackPlayer(p1);
 					reversi.whitePlayer(p2);
