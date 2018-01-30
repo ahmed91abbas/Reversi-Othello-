@@ -326,7 +326,6 @@ public class Reversi {
 				white.put(name, disc);
 			}
 			ArrayList<String> flippedDiscs = updateBoard(disc);
-			System.out.println(flippedDiscs);
 			movesMade.add(new Move(name, flippedDiscs));
 			return true;
 		}
@@ -366,7 +365,7 @@ public class Reversi {
 		return availableMoves;
 	}
 	
-	private void removeLastMove() { //TODO
+	private void removeLastMove() {
 		int index = movesMade.size() - 1;
 		Move move = movesMade.remove(index);
 		String name = move.name;

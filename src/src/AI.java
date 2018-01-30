@@ -29,7 +29,7 @@ public class AI implements Player{
 			for (String move : availableMoves) {
 				int v = minimax(move, depth - 1, false);
 				bestValue = Math.max(bestValue, v);
-				//TODO revert
+				reversi.revert(move);
 			}
 			return bestValue;
 		} else {
@@ -38,7 +38,7 @@ public class AI implements Player{
 			for (String move : availableMoves) {
 				int v = minimax(move, depth - 1, true);
 				bestValue = Math.min(bestValue, v);
-				//TODO revert
+				reversi.revert(move);
 			}
 			return bestValue;
 		}
@@ -50,7 +50,7 @@ public class AI implements Player{
 		for (String move : availableMoves) {
 			int point = minimax(move, depth, true);
 			pointsOfMoves.put(move, point);
-			//TODO revert
+			reversi.revert(move);
 		}
 		String bestMove = "";
 		int currentMax = -1;
