@@ -49,22 +49,6 @@ public class Reversi {
 		p2 = null;
 		movesMade = new ArrayList<Move>();
 	}
-	
-	public Reversi(Reversi original) {
-		turnCount = original.turnCount;
-		letters = original.letters;
-		field = original.field;
-		black = original.black;
-		white = original.white;
-		buttons = original.buttons;
-		availableMoves = original.availableMoves;
-		allowAllMoves = original.allowAllMoves;
-		whiteHasMoves = original.whiteHasMoves;
-		blackHasMoves = original.blackHasMoves;
-		gameOver = original.gameOver;
-		p1 = original.p1;
-		p2 = original.p2;
-	}
 
 	public void allowAllMoves(boolean state){
 		allowAllMoves = state;
@@ -94,10 +78,10 @@ public class Reversi {
 				gameOver = true;
 			}
 			
-			if (!gameOver)
+			if (!gameOver){
 				System.out.println("Next is: " + nextPlayer + " (Black discs = " + blackDiscs + ", White discs = " + whiteDiscs + ")");
-			
-			turnCount++;
+				turnCount++;
+			}
 			
 			
 			if (gameOver) {
@@ -309,8 +293,11 @@ public class Reversi {
 			y = y + addToY;
 			key = letters[y] + "" + x;
 		}
-		if(flip)
+		if(flip) {
 			flipDiscs(discsToFlip);
+		} else {
+			discsToFlip.clear();
+		}
 		return discsToFlip;
 	}
 	
@@ -331,14 +318,15 @@ public class Reversi {
 		if (!allowAllMoves && (field.containsKey(name) || !availableMoves.contains(name))) {
 			return false;
 		} else {
-			Disc n = new Disc(playerID, name);
-			field.put(name, n);
+			Disc disc = new Disc(playerID, name);
+			field.put(name, disc);
 			if (playerID == 0) {
-				black.put(name, n);
+				black.put(name, disc);
 			} else {
-				white.put(name, n);
+				white.put(name, disc);
 			}
-			ArrayList<String> flippedDiscs = updateBoard(n);
+			ArrayList<String> flippedDiscs = updateBoard(disc);
+			System.out.println(flippedDiscs);
 			movesMade.add(new Move(name, flippedDiscs));
 			return true;
 		}
@@ -381,10 +369,24 @@ public class Reversi {
 	private void removeLastMove() { //TODO
 		int index = movesMade.size() - 1;
 		Move move = movesMade.remove(index);
-		field.remove(move.name);
-		JButton button = buttons.get(move.name);
+		String name = move.name;
+		System.out.println("removing "+ name);
+		System.out.println(move.flippedDiscs.toString());
+		field.remove(name);
+		if (black.containsKey(name)) {
+			black.remove(name);
+		} else {
+			white.remove(name);
+		}
+		JButton button = buttons.get(name);
 		button.setBackground(Color.GREEN);
 		flipDiscs(move.flippedDiscs);
+		turnCount++;
+		if (turnCount % 2 == 0) {
+			triggerMove(p1);			
+		} else {
+			triggerMove(p2);
+		}
 	}
 	
 	public void revert(String move) {
@@ -446,8 +448,6 @@ public class Reversi {
 					reversi.makeMove("e5");
 					reversi.makeMove("e4");
 					reversi.makeMove("d4");
-					reversi.makeMove("d3");
-					reversi.revert("d3");
 					reversi.allowAllMoves(false);
 					if (player1.equals("Random plays")) {
 						p1 = new RandomPlays(reversi);						
