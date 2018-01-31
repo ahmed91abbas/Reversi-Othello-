@@ -14,9 +14,11 @@ public class AI implements Player{
 	}
 	
 	private int minimax(String node, int depth, boolean maximizingPlayer) {
+//		System.out.println(node + "   " + depth);
 		reversi.makeMove(node);
 		if (depth == 0 || reversi.gameOver) {
-			if(node.equals("black")) {
+			String color = reversi.getBoxColor(node);
+			if(color.equals("black")) {
 				return reversi.getNbrOfBlack();
 			} else {
 				return reversi.getNbrOfWhite();
@@ -29,7 +31,6 @@ public class AI implements Player{
 			for (String move : availableMoves) {
 				int v = minimax(move, depth - 1, false);
 				bestValue = Math.max(bestValue, v);
-				reversi.revert(move);
 			}
 			return bestValue;
 		} else {
@@ -38,7 +39,6 @@ public class AI implements Player{
 			for (String move : availableMoves) {
 				int v = minimax(move, depth - 1, true);
 				bestValue = Math.min(bestValue, v);
-				reversi.revert(move);
 			}
 			return bestValue;
 		}
@@ -46,6 +46,7 @@ public class AI implements Player{
 	
 	@Override
 	public void makeMove(ArrayList<String> availableMoves) {
+		reversi.setSimulationState(true);
 		HashMap<String, Integer> pointsOfMoves = new HashMap<String, Integer>();
 		for (String move : availableMoves) {
 			int point = minimax(move, depth, true);
@@ -61,7 +62,16 @@ public class AI implements Player{
 				bestMove = key;
 			}
 		}
+		reversi.setSimulationState(false);
 		reversi.makeMove(bestMove);
+		
+//		reversi.setSimulationState(true);
+//		String move = availableMoves.get(0);
+//		int point = minimax(move, 1, true);
+//		System.out.println("AI " + point);
+//		reversi.revert(move);
+//		reversi.setSimulationState(false);
+//		reversi.makeMove(move);
 	}
 
 }

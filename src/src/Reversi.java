@@ -31,6 +31,7 @@ public class Reversi {
 	private Player p2;
 	protected boolean gameOver;
 	private ArrayList<Move> movesMade;
+	private boolean simulation;
 	
 	public Reversi() {
 		turnCount = 0;
@@ -48,6 +49,7 @@ public class Reversi {
 		p1 = null;
 		p2 = null;
 		movesMade = new ArrayList<Move>();
+		simulation = false;
 	}
 
 	public void allowAllMoves(boolean state){
@@ -96,7 +98,7 @@ public class Reversi {
 				System.out.println("White scored " + whiteDiscs + " points.");
 			}
 			
-			if (!allowAllMoves && !gameOver) {
+			if (!allowAllMoves && !gameOver && !simulation) {
 				updateAvailableMoves();
 				if (nextPlayer.equals("black") && p1 != null && blackHasMoves) {
 					p1.makeMove(availableMoves);
@@ -369,8 +371,7 @@ public class Reversi {
 		int index = movesMade.size() - 1;
 		Move move = movesMade.remove(index);
 		String name = move.name;
-		System.out.println("removing "+ name);
-		System.out.println(move.flippedDiscs.toString());
+//		System.out.println("Removing " + name);
 		field.remove(name);
 		if (black.containsKey(name)) {
 			black.remove(name);
@@ -381,9 +382,11 @@ public class Reversi {
 		button.setBackground(Color.GREEN);
 		flipDiscs(move.flippedDiscs);
 		turnCount++;
-		if (turnCount % 2 == 0) {
-			triggerMove(p1);			
-		} else {
+		if (turnCount % 2 == 0 && !simulation) {
+			System.out.println("Next is: black (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
+			triggerMove(p1);		
+		} else if ((turnCount % 2 == 1 && !simulation)) {
+			System.out.println("Next is: white (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
 			triggerMove(p2);
 		}
 	}
@@ -400,6 +403,14 @@ public class Reversi {
 		} else {
 			System.out.println(move + " is not a move that has been made!");
 		}
+	}
+	
+	public String getBoxColor(String box) {
+		return field.get(box).getColor();
+	}
+	
+	public void setSimulationState(boolean state) {
+		simulation = state;
 	}
 	
 	public static void start() {
@@ -431,6 +442,14 @@ public class Reversi {
 		panelList[2].add(box2);
 		JButton startButton = new JButton("Start");
 		startButton.setFont(font);
+		panelList[3].add(startButton);
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(4,1));
+		for (int i = 0; i < panelList.length; i++)
+			panel.add(panelList[i]);
+		dialog.add(panel);
+		dialog.pack();
+		dialog.setVisible(true);
 		startButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -451,12 +470,12 @@ public class Reversi {
 					if (player1.equals("Random plays")) {
 						p1 = new RandomPlays(reversi);						
 					} else if (player1.equals("AI")) {
-						p1 = new AI(reversi, 1);
+						p1 = new AI(reversi, 5);
 					}
 					if (player2.equals("Random plays")) {
 						p2 = new RandomPlays(reversi);						
 					} else if (player2.equals("AI")) {
-						p2 = new AI(reversi, 1);
+						p2 = new AI(reversi, 5);
 					}
 					reversi.blackPlayer(p1);
 					reversi.whitePlayer(p2);
@@ -466,14 +485,6 @@ public class Reversi {
 				}
 			}			
 		});
-		panelList[3].add(startButton);
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(4,1));
-		for (int i = 0; i < panelList.length; i++)
-			panel.add(panelList[i]);
-		dialog.add(panel);
-		dialog.pack();
-		dialog.setVisible(true);
 	}
 	
 	public static void main(String[] args) {
