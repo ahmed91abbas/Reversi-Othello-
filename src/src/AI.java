@@ -46,7 +46,7 @@ public class AI implements Player{
 	
 	@Override
 	public void makeMove(ArrayList<String> availableMoves) {
-		reversi.setSimulationState(true);
+		reversi.setSimulationMode(true);
 		HashMap<String, Integer> pointsOfMoves = new HashMap<String, Integer>();
 		for (String move : availableMoves) {
 			int point = minimax(move, depth, true);
@@ -62,7 +62,7 @@ public class AI implements Player{
 				bestMove = key;
 			}
 		}
-		reversi.setSimulationState(false);
+		reversi.setSimulationMode(false);
 		reversi.makeMove(bestMove);
 	}
 

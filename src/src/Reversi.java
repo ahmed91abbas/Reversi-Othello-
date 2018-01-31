@@ -76,6 +76,7 @@ public class Reversi {
 			}
 			
 			if (blackDiscs + whiteDiscs == 64) {
+				System.out.println(simulation);
 				clearAvailableMoves();
 				gameOver = true;
 			}
@@ -107,7 +108,7 @@ public class Reversi {
 				}
 			}	
 			
-		} 
+		}
 	}
 
 	private JButton createButton(final String name) {
@@ -371,7 +372,7 @@ public class Reversi {
 		int index = movesMade.size() - 1;
 		Move move = movesMade.remove(index);
 		String name = move.name;
-//		System.out.println("Removing " + name);
+		System.out.println("Removing " + name);
 		field.remove(name);
 		if (black.containsKey(name)) {
 			black.remove(name);
@@ -409,7 +410,7 @@ public class Reversi {
 		return field.get(box).getColor();
 	}
 	
-	public void setSimulationState(boolean state) {
+	public void setSimulationMode(boolean state) {
 		simulation = state;
 	}
 	
