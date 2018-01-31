@@ -443,8 +443,6 @@ public class Reversi {
 		box2.setFont(font);
 		panelList[2].add(whitePlayerLabel);
 		panelList[2].add(box2);
-		
-		
 		JLabel depthLabel = new JLabel("Choose depth ");
 		depthLabel.setFont(font);
 		panelList[3].add(depthLabel);
@@ -505,5 +503,18 @@ public class Reversi {
 	
 	public static void main(String[] args) {
 		start();
+//		Reversi reversi = new Reversi();
+//		reversi.createField();
+//		reversi.allowAllMoves(true);
+//		reversi.makeMove("d5");
+//		reversi.makeMove("e5");
+//		reversi.makeMove("e4");
+//		reversi.makeMove("d4");
+//		reversi.allowAllMoves(false);
+//		Player p1 = new AI(reversi, 1);
+//		Player p2 = new AI(reversi, 4);
+//		reversi.blackPlayer(p1);
+//		reversi.whitePlayer(p2);
+//		reversi.triggerMove(p1);
 	}
 }
