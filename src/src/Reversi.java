@@ -76,16 +76,15 @@ public class Reversi {
 			}
 			
 			if (blackDiscs + whiteDiscs == 64) {
-				System.out.println(simulation);
 				clearAvailableMoves();
 				gameOver = true;
 			}
 			
 			if (!gameOver){
-				System.out.println("Next is: " + nextPlayer + " (Black discs = " + blackDiscs + ", White discs = " + whiteDiscs + ")");
 				turnCount++;
+				if (!simulation)
+					System.out.println("Next is: " + nextPlayer + " (Black discs = " + blackDiscs + ", White discs = " + whiteDiscs + ")");
 			}
-			
 			
 			if (gameOver && !simulation) {
 				if (blackDiscs > whiteDiscs) {
@@ -98,7 +97,7 @@ public class Reversi {
 				System.out.println("Black scored " + blackDiscs + " points.");
 				System.out.println("White scored " + whiteDiscs + " points.");
 			}
-			
+			System.out.println(!allowAllMoves +" "+ !gameOver +" "+ !simulation);
 			if (!allowAllMoves && !gameOver && !simulation) {
 				updateAvailableMoves();
 				if (nextPlayer.equals("black") && p1 != null && blackHasMoves) {
@@ -352,7 +351,7 @@ public class Reversi {
 	
 	public void triggerMove(Player p) {
 		updateAvailableMoves();
-		if (p != null)
+		if (p != null && !simulation)
 			p.makeMove(availableMoves);
 	}
 
@@ -369,10 +368,12 @@ public class Reversi {
 	}
 	
 	private void removeLastMove() {
+		gameOver = false;
 		int index = movesMade.size() - 1;
 		Move move = movesMade.remove(index);
 		String name = move.name;
-		System.out.println("Removing " + name);
+		int sum = black.size() + white.size();
+//		System.out.println("Removing " + name + "   "+ sum);
 		field.remove(name);
 		if (black.containsKey(name)) {
 			black.remove(name);
@@ -383,10 +384,10 @@ public class Reversi {
 		button.setBackground(Color.GREEN);
 		flipDiscs(move.flippedDiscs);
 		turnCount++;
-		if (turnCount % 2 == 0 && !simulation) {
+		if (turnCount % 2 == 0) {
 			System.out.println("Next is: black (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
 			triggerMove(p1);		
-		} else if ((turnCount % 2 == 1 && !simulation)) {
+		} else {
 			System.out.println("Next is: white (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
 			triggerMove(p2);
 		}
@@ -495,6 +496,7 @@ public class Reversi {
 					reversi.whitePlayer(p2);
 					reversi.triggerMove(p1);
 				} catch (Exception e) {
+					e.printStackTrace();
 					start();
 				}
 			}			
@@ -502,6 +504,19 @@ public class Reversi {
 	}
 	
 	public static void main(String[] args) {
-		start();
+//		start();
+		Reversi reversi = new Reversi();
+		reversi.createField();
+		reversi.allowAllMoves(true);
+		reversi.makeMove("d5");
+		reversi.makeMove("e5");
+		reversi.makeMove("e4");
+		reversi.makeMove("d4");
+		reversi.allowAllMoves(false);
+		Player p1 = new AI(reversi, 1);
+		Player p2 = new AI(reversi, 1);
+		reversi.blackPlayer(p1);
+		reversi.whitePlayer(p2);
+		reversi.triggerMove(p1);
 	}
 }

@@ -28,17 +28,21 @@ public class AI implements Player{
 		if (maximizingPlayer) {
 			int bestValue = Integer.MIN_VALUE;
 			ArrayList<String> availableMoves = reversi.getAvailableMoves();
-			for (String move : availableMoves) {
+			for (int i = 0; i < availableMoves.size(); i++) {
+				String move = availableMoves.get(i);
 				int v = minimax(move, depth - 1, false);
 				bestValue = Math.max(bestValue, v);
+				reversi.revert(move);
 			}
 			return bestValue;
 		} else {
 			int bestValue = Integer.MAX_VALUE;
 			ArrayList<String> availableMoves = reversi.getAvailableMoves();
-			for (String move : availableMoves) {
+			for (int i = 0; i < availableMoves.size(); i++) {
+				String move = availableMoves.get(i);
 				int v = minimax(move, depth - 1, true);
 				bestValue = Math.min(bestValue, v);
+				reversi.revert(move);
 			}
 			return bestValue;
 		}
@@ -48,7 +52,8 @@ public class AI implements Player{
 	public void makeMove(ArrayList<String> availableMoves) {
 		reversi.setSimulationMode(true);
 		HashMap<String, Integer> pointsOfMoves = new HashMap<String, Integer>();
-		for (String move : availableMoves) {
+		for (int i = 0; i < availableMoves.size(); i++) {
+			String move = availableMoves.get(i);
 			int point = minimax(move, depth, true);
 			pointsOfMoves.put(move, point);
 			reversi.revert(move);
