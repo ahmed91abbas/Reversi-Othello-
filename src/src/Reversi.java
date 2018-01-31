@@ -86,7 +86,7 @@ public class Reversi {
 			}
 			
 			
-			if (gameOver) {
+			if (gameOver && !simulation) {
 				if (blackDiscs > whiteDiscs) {
 					System.out.println("\nThe winner is BLACK!");
 				} else if (whiteDiscs > blackDiscs) {
@@ -418,7 +418,7 @@ public class Reversi {
 		dialog.setLocationRelativeTo(null);
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setTitle("Reversi start menu");
-		JPanel[] panelList = new JPanel[4];
+		JPanel[] panelList = new JPanel[5];
 		Font font = new Font("Serif", Font.PLAIN, 30);
 		for (int i = 0; i < panelList.length; i++) {
 			panelList[i] = new JPanel();
@@ -440,11 +440,21 @@ public class Reversi {
 		box2.setFont(font);
 		panelList[2].add(whitePlayerLabel);
 		panelList[2].add(box2);
+		
+		
+		JLabel depthLabel = new JLabel("Choose depth ");
+		depthLabel.setFont(font);
+		panelList[3].add(depthLabel);
+		JTextField depthJta = new JTextField();
+		depthJta.setFont(font);
+		depthJta.setPreferredSize(new Dimension(90,40));
+		panelList[3].add(depthJta);
+		
 		JButton startButton = new JButton("Start");
 		startButton.setFont(font);
-		panelList[3].add(startButton);
+		panelList[4].add(startButton);
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(4,1));
+		panel.setLayout(new GridLayout(5,1));
 		for (int i = 0; i < panelList.length; i++)
 			panel.add(panelList[i]);
 		dialog.add(panel);
@@ -459,7 +469,20 @@ public class Reversi {
 					Player p2 = null;
 					String player1 = (String) box1.getSelectedItem();
 					String player2 = (String) box2.getSelectedItem();
-					Reversi reversi = new Reversi();
+					Reversi reversi = new Reversi();	
+					
+					if (player1.equals("Random plays")) {
+						p1 = new RandomPlays(reversi);						
+					} else if (player1.equals("AI")) {
+						int depth = Integer.parseInt(depthJta.getText());
+						p1 = new AI(reversi, depth);
+					}
+					if (player2.equals("Random plays")) {
+						p2 = new RandomPlays(reversi);						
+					} else if (player2.equals("AI")) {
+						int depth = Integer.parseInt(depthJta.getText());
+						p2 = new AI(reversi, depth);
+					}
 					reversi.createField();
 					reversi.allowAllMoves(true);
 					reversi.makeMove("d5");
@@ -467,16 +490,6 @@ public class Reversi {
 					reversi.makeMove("e4");
 					reversi.makeMove("d4");
 					reversi.allowAllMoves(false);
-					if (player1.equals("Random plays")) {
-						p1 = new RandomPlays(reversi);						
-					} else if (player1.equals("AI")) {
-						p1 = new AI(reversi, 5);
-					}
-					if (player2.equals("Random plays")) {
-						p2 = new RandomPlays(reversi);						
-					} else if (player2.equals("AI")) {
-						p2 = new AI(reversi, 5);
-					}
 					reversi.blackPlayer(p1);
 					reversi.whitePlayer(p2);
 					reversi.triggerMove(p1);

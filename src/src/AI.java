@@ -64,14 +64,6 @@ public class AI implements Player{
 		}
 		reversi.setSimulationState(false);
 		reversi.makeMove(bestMove);
-		
-//		reversi.setSimulationState(true);
-//		String move = availableMoves.get(0);
-//		int point = minimax(move, 1, true);
-//		System.out.println("AI " + point);
-//		reversi.revert(move);
-//		reversi.setSimulationState(false);
-//		reversi.makeMove(move);
 	}
 
 }
