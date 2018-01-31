@@ -28,17 +28,31 @@ public class AI implements Player{
 		if (maximizingPlayer) {
 			int bestValue = Integer.MIN_VALUE;
 			ArrayList<String> availableMoves = reversi.getAvailableMoves();
-			for (String move : availableMoves) {
+			for (int i = 0; i < availableMoves.size(); i++) {
+				String move = availableMoves.get(i);
+				if (i != 0) {
+					String prev = availableMoves.get(i - 1);
+					reversi.revert(prev);
+				}
 				int v = minimax(move, depth - 1, false);
 				bestValue = Math.max(bestValue, v);
+				if (i == availableMoves.size() - 1)
+					reversi.revert(availableMoves.get(i));
 			}
 			return bestValue;
 		} else {
 			int bestValue = Integer.MAX_VALUE;
 			ArrayList<String> availableMoves = reversi.getAvailableMoves();
-			for (String move : availableMoves) {
+			for (int i = 0; i < availableMoves.size(); i++) {
+				String move = availableMoves.get(i);
+				if (i != 0) {
+					String prev = availableMoves.get(i - 1);
+					reversi.revert(prev);
+				}
 				int v = minimax(move, depth - 1, true);
 				bestValue = Math.min(bestValue, v);
+				if (i == availableMoves.size() - 1)
+					reversi.revert(availableMoves.get(i));
 			}
 			return bestValue;
 		}
@@ -48,10 +62,16 @@ public class AI implements Player{
 	public void makeMove(ArrayList<String> availableMoves) {
 		reversi.setSimulationMode(true);
 		HashMap<String, Integer> pointsOfMoves = new HashMap<String, Integer>();
-		for (String move : availableMoves) {
+		for (int i = 0; i < availableMoves.size(); i++) {
+			String move = availableMoves.get(i);
+			if (i != 0) {
+				String prev = availableMoves.get(i - 1);
+				reversi.revert(prev);
+			}
 			int point = minimax(move, depth, true);
 			pointsOfMoves.put(move, point);
-			reversi.revert(move);
+			if (i == availableMoves.size() - 1)
+				reversi.revert(availableMoves.get(i));
 		}
 		String bestMove = "";
 		int currentMax = -1;

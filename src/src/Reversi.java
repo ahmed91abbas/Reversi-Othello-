@@ -76,18 +76,18 @@ public class Reversi {
 			}
 			
 			if (blackDiscs + whiteDiscs == 64) {
-				System.out.println(simulation);
 				clearAvailableMoves();
 				gameOver = true;
 			}
 			
 			if (!gameOver){
-				System.out.println("Next is: " + nextPlayer + " (Black discs = " + blackDiscs + ", White discs = " + whiteDiscs + ")");
+				if(!simulation)
+					System.out.println("Next is: " + nextPlayer + " (Black discs = " + blackDiscs + ", White discs = " + whiteDiscs + ")");
 				turnCount++;
 			}
 			
 			
-			if (gameOver && !simulation) {
+			if (gameOver) {
 				if (blackDiscs > whiteDiscs) {
 					System.out.println("\nThe winner is BLACK!");
 				} else if (whiteDiscs > blackDiscs) {
@@ -108,7 +108,7 @@ public class Reversi {
 				}
 			}	
 			
-		}
+		} 
 	}
 
 	private JButton createButton(final String name) {
@@ -372,7 +372,7 @@ public class Reversi {
 		int index = movesMade.size() - 1;
 		Move move = movesMade.remove(index);
 		String name = move.name;
-		System.out.println("Removing " + name);
+//		System.out.println("Removing " + name);
 		field.remove(name);
 		if (black.containsKey(name)) {
 			black.remove(name);
@@ -393,6 +393,7 @@ public class Reversi {
 	}
 	
 	public void revert(String move) {
+//		System.out.println("reverting " + move);
 		Move m = new Move(move, null);
 		if (movesMade.contains(m)) {
 			String lastMove = movesMade.get(movesMade.size() - 1).name;
@@ -402,7 +403,8 @@ public class Reversi {
 			}
 			removeLastMove();
 		} else {
-			System.out.println(move + " is not a move that has been made!");
+			if (!simulation)
+				System.out.println(move + " is not a move that has been made!");
 		}
 	}
 	
@@ -410,8 +412,8 @@ public class Reversi {
 		return field.get(box).getColor();
 	}
 	
-	public void setSimulationMode(boolean state) {
-		simulation = state;
+	public void setSimulationMode(boolean mode) {
+		simulation = mode;
 	}
 	
 	public static void start() {
