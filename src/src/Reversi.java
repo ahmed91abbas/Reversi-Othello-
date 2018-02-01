@@ -501,20 +501,28 @@ public class Reversi {
 		});
 	}
 	
+	public static void manualSetup() {
+		Reversi reversi = new Reversi();
+		reversi.createField();
+		reversi.allowAllMoves(true);
+		reversi.makeMove("d5");
+		reversi.makeMove("e5");
+		reversi.makeMove("e4");
+		reversi.makeMove("d4");
+		reversi.allowAllMoves(false);
+		Player p1 = null;
+		Player p2 = null;
+		p1 = new AI(reversi, 0);
+//		p1 = new RandomPlays(reversi);
+//		p2 = new AI(reversi, 6);
+		p2 = new RandomPlays(reversi);
+		reversi.blackPlayer(p1);
+		reversi.whitePlayer(p2);
+		reversi.triggerMove(p1);
+	}
+	
 	public static void main(String[] args) {
-		start();
-//		Reversi reversi = new Reversi();
-//		reversi.createField();
-//		reversi.allowAllMoves(true);
-//		reversi.makeMove("d5");
-//		reversi.makeMove("e5");
-//		reversi.makeMove("e4");
-//		reversi.makeMove("d4");
-//		reversi.allowAllMoves(false);
-//		Player p1 = new AI(reversi, 1);
-//		Player p2 = new AI(reversi, 4);
-//		reversi.blackPlayer(p1);
-//		reversi.whitePlayer(p2);
-//		reversi.triggerMove(p1);
+//		start();
+		manualSetup();
 	}
 }

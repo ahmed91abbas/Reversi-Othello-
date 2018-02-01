@@ -49,7 +49,7 @@ public class AI implements Player{
 					String prev = availableMoves.get(i - 1);
 					reversi.revert(prev);
 				}
-				int v = minimax(move, depth - 1, true);
+				int v = minimax(move, depth - 1, false);
 				bestValue = Math.min(bestValue, v);
 				if (i == availableMoves.size() - 1)
 					reversi.revert(availableMoves.get(i));
