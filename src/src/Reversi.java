@@ -352,7 +352,7 @@ public class Reversi {
 	
 	public void triggerMove(Player p) {
 		updateAvailableMoves();
-		if (p != null)
+		if (p != null && !simulation)
 			p.makeMove(availableMoves);
 	}
 
@@ -416,6 +416,10 @@ public class Reversi {
 		simulation = mode;
 	}
 	
+	public String getCurrentPlayerColor() {
+		return turnCount % 2 == 0 ? "black" : "white";
+	}
+	
 	public static void start() {
 		JDialog dialog = new JDialog();
 		dialog.setLocationRelativeTo(null);
@@ -476,13 +480,13 @@ public class Reversi {
 						p1 = new RandomPlays(reversi);						
 					} else if (player1.equals("AI")) {
 						int depth = Integer.parseInt(depthJta.getText());
-						p1 = new AI(reversi, depth);
+						p1 = new AI(reversi, depth, "black");
 					}
 					if (player2.equals("Random plays")) {
 						p2 = new RandomPlays(reversi);						
 					} else if (player2.equals("AI")) {
 						int depth = Integer.parseInt(depthJta.getText());
-						p2 = new AI(reversi, depth);
+						p2 = new AI(reversi, depth, "white");
 					}
 					reversi.createField();
 					reversi.allowAllMoves(true);
@@ -512,9 +516,9 @@ public class Reversi {
 		reversi.allowAllMoves(false);
 		Player p1 = null;
 		Player p2 = null;
-		p1 = new AI(reversi, 0);
+		p1 = new AI(reversi, 3, "black");
 //		p1 = new RandomPlays(reversi);
-//		p2 = new AI(reversi, 6);
+//		p2 = new AI(reversi, 4);
 		p2 = new RandomPlays(reversi);
 		reversi.blackPlayer(p1);
 		reversi.whitePlayer(p2);

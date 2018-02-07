@@ -3,30 +3,39 @@ package src;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class AI implements Player{
-	
+public class AI implements Player {
+
 	private Reversi reversi;
 	private int depth;
-	
-	public AI(Reversi reversi, int depth) {
+	private String color;
+
+	public AI(Reversi reversi, int depth, String color) {
 		this.reversi = reversi;
 		this.depth = depth;
+		this.color = color;
 	}
-	
-	private int minimax(String node, int depth, boolean maximizingPlayer) {
-//		System.out.println(node + "   " + depth);
-		reversi.makeMove(node);
+
+	private double minimax(String node, int depth) {
+		// System.out.println(node + " " + depth);
 		if (depth == 0 || reversi.gameOver) {
-			String color = reversi.getBoxColor(node);
-			if(color.equals("black")) {
+			if (this.color.equals("black")) {
+//				return reversi.getNbrOfBlack() / ((double) reversi.getNbrOfBlack() + reversi.getNbrOfWhite());
 				return reversi.getNbrOfBlack();
 			} else {
+//				return reversi.getNbrOfWhite() / ((double) reversi.getNbrOfBlack() + reversi.getNbrOfWhite());
 				return reversi.getNbrOfWhite();
 			}
 		}
-		
+		reversi.makeMove(node);
+		boolean maximizingPlayer;
+		if (reversi.getCurrentPlayerColor().equals(this.color)) {
+			maximizingPlayer = true;
+		} else {
+			maximizingPlayer = false;
+		}
+
 		if (maximizingPlayer) {
-			int bestValue = Integer.MIN_VALUE;
+			double bestValue = Double.MIN_VALUE;
 			ArrayList<String> availableMoves = reversi.getAvailableMoves();
 			for (int i = 0; i < availableMoves.size(); i++) {
 				String move = availableMoves.get(i);
@@ -34,14 +43,14 @@ public class AI implements Player{
 					String prev = availableMoves.get(i - 1);
 					reversi.revert(prev);
 				}
-				int v = minimax(move, depth - 1, false);
+				double v = minimax(move, depth - 1);
 				bestValue = Math.max(bestValue, v);
-				if (i == availableMoves.size() - 1)
+				if (i == (availableMoves.size() - 1))
 					reversi.revert(availableMoves.get(i));
 			}
 			return bestValue;
 		} else {
-			int bestValue = Integer.MAX_VALUE;
+			double bestValue = Double.MAX_VALUE;
 			ArrayList<String> availableMoves = reversi.getAvailableMoves();
 			for (int i = 0; i < availableMoves.size(); i++) {
 				String move = availableMoves.get(i);
@@ -49,34 +58,35 @@ public class AI implements Player{
 					String prev = availableMoves.get(i - 1);
 					reversi.revert(prev);
 				}
-				int v = minimax(move, depth - 1, false);
-				bestValue = Math.min(bestValue, v);
-				if (i == availableMoves.size() - 1)
+				double v = minimax(move, depth - 1);
+				bestValue = (double) Math.min(bestValue, v);
+				if (i == (availableMoves.size() - 1))
 					reversi.revert(availableMoves.get(i));
 			}
 			return bestValue;
 		}
 	}
-	
+
 	@Override
 	public void makeMove(ArrayList<String> availableMoves) {
 		reversi.setSimulationMode(true);
-		HashMap<String, Integer> pointsOfMoves = new HashMap<String, Integer>();
+		HashMap<String, Double> pointsOfMoves = new HashMap<String, Double>();
 		for (int i = 0; i < availableMoves.size(); i++) {
 			String move = availableMoves.get(i);
 			if (i != 0) {
 				String prev = availableMoves.get(i - 1);
 				reversi.revert(prev);
 			}
-			int point = minimax(move, depth, true);
+			double point = minimax(move, depth);
 			pointsOfMoves.put(move, point);
 			if (i == availableMoves.size() - 1)
 				reversi.revert(availableMoves.get(i));
 		}
+		System.out.println(pointsOfMoves.toString());
 		String bestMove = "";
-		int currentMax = -1;
+		double currentMax = -1;
 		for (String key : pointsOfMoves.keySet()) {
-			int point = pointsOfMoves.get(key);
+			double point = pointsOfMoves.get(key);
 			if (point >= currentMax) {
 				currentMax = point;
 				bestMove = key;
