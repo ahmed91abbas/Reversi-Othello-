@@ -32,7 +32,7 @@ public class Reversi {
 	protected boolean gameOver;
 	private ArrayList<Move> movesMade;
 	private boolean simulation;
-	
+
 	public Reversi() {
 		turnCount = 0;
 		String str = " abcdefgh ";
@@ -52,10 +52,10 @@ public class Reversi {
 		simulation = false;
 	}
 
-	public void allowAllMoves(boolean state){
+	public void allowAllMoves(boolean state) {
 		allowAllMoves = state;
 	}
-	
+
 	public void makeMove(String name) {
 		JButton button = buttons.get(name);
 		int playerID = turnCount % 2;
@@ -74,20 +74,21 @@ public class Reversi {
 				nextPlayer = "black";
 				break;
 			}
-			
+
 			if (blackDiscs + whiteDiscs == 64) {
-				if(!simulation)
+				if (!simulation)
 					clearAvailableMoves();
 				gameOver = true;
 			}
-			
-			if (!gameOver){
-				if(!simulation)
-					System.out.println("Next is: " + nextPlayer + " (Black discs = " + blackDiscs + ", White discs = " + whiteDiscs + ")");
-				turnCount++;
+
+			if (!gameOver) {
+				if (!simulation)
+					System.out.println("Next is: " + nextPlayer + " (Black discs = " + blackDiscs + ", White discs = "
+							+ whiteDiscs + ")");
+				switchTurn();
 			}
-			
-			if (gameOver) {
+
+			if (gameOver && !simulation) {
 				if (blackDiscs > whiteDiscs) {
 					System.out.println("\nThe winner is BLACK!");
 				} else if (whiteDiscs > blackDiscs) {
@@ -98,7 +99,7 @@ public class Reversi {
 				System.out.println("Black scored " + blackDiscs + " points.");
 				System.out.println("White scored " + whiteDiscs + " points.");
 			}
-			
+
 			if (!allowAllMoves && !gameOver && !simulation) {
 				updateAvailableMoves();
 				if (nextPlayer.equals("black") && p1 != null && blackHasMoves) {
@@ -106,8 +107,8 @@ public class Reversi {
 				} else if (nextPlayer.equals("white") && p2 != null && whiteHasMoves) {
 					p2.makeMove(availableMoves);
 				}
-			}	
-			
+			}
+
 		} else {
 			System.out.println(getCurrentPlayerColor() + " failed to make move " + name);
 		}
@@ -182,7 +183,7 @@ public class Reversi {
 			String name = letters[y] + "" + x;
 			Disc nieghbour = field.get(name);
 			if (nieghbour != null) {
-				sameColor = nieghbour.getColor().equals(core.getColor());				
+				sameColor = nieghbour.getColor().equals(core.getColor());
 			}
 			if ((nieghbour == null && !foundDiff) || sameColor) {
 				checkNext = false;
@@ -196,7 +197,7 @@ public class Reversi {
 			y = y + addToY;
 		}
 	}
-	
+
 	public void clearAvailableMoves() {
 		for (int i = 0; i < availableMoves.size(); i++) {
 			JButton button = buttons.get(availableMoves.get(i));
@@ -204,36 +205,44 @@ public class Reversi {
 		}
 		availableMoves.clear();
 	}
-	
+
 	public void updateAvailableMoves() {
 		clearAvailableMoves();
 		int playerID = turnCount % 2;
 		HashMap<String, Disc> player = null;
-		switch(playerID) {
-			case 0: player = black; break;
-			case 1: player = white; break;
+		switch (playerID) {
+		case 0:
+			player = black;
+			break;
+		case 1:
+			player = white;
+			break;
 		}
-		for(String key : player.keySet()) {
+		for (String key : player.keySet()) {
 			Disc core = field.get(key);
-			checkDirection(core, -1, 0); //up
-			checkDirection(core, 1, 0); //down
-			checkDirection(core, 0, -1); //left
-			checkDirection(core, 0, 1); //right
-			checkDirection(core, -1, -1); //up left
-			checkDirection(core, 1, 1); //down right
+			checkDirection(core, -1, 0); // up
+			checkDirection(core, 1, 0); // down
+			checkDirection(core, 0, -1); // left
+			checkDirection(core, 0, 1); // right
+			checkDirection(core, -1, -1); // up left
+			checkDirection(core, 1, 1); // down right
 			checkDirection(core, -1, 1); // up right
-			checkDirection(core, 1, -1); //down left
+			checkDirection(core, 1, -1); // down left
 		}
 		for (int i = 0; i < availableMoves.size(); i++) {
 			JButton button = buttons.get(availableMoves.get(i));
 			button.setText("*");
 		}
 		if (availableMoves.size() > 0) {
-			switch(playerID){
-				case 0: blackHasMoves = true; break;
-				case 1: whiteHasMoves = true; break;
+			switch (playerID) {
+			case 0:
+				blackHasMoves = true;
+				break;
+			case 1:
+				whiteHasMoves = true;
+				break;
 			}
-		} else if(!allowAllMoves && !gameOver) {
+		} else if (!allowAllMoves && !gameOver) {
 			if (!whiteHasMoves && !blackHasMoves) {
 				System.out.println("\nThe game has finished because both players has no available moves left!");
 				String winner = black.size() > white.size() ? "BLACK" : "WHITE";
@@ -244,21 +253,27 @@ public class Reversi {
 			} else if (playerID == 0) {
 				blackHasMoves = false;
 				System.out.println("\nPlayer Black has no available moves! Switching turns");
-				System.out.println("Next is: white (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
-				switchTurn();
-				if(!simulation)
+				System.out.println(
+						"Next is: white (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
+
+				if (!simulation) {
+					switchTurn();
 					triggerMove(p2);
+				}
 			} else if (playerID == 1) {
 				whiteHasMoves = false;
 				System.out.println("\nPlayer White has no available moves! Switching turns");
-				System.out.println("Next is: black (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
-				switchTurn();
-				if(!simulation)
+				System.out.println(
+						"Next is: black (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
+				
+				if (!simulation) {
+					switchTurn();
 					triggerMove(p1);
+				}
 			}
 		}
 	}
-	
+
 	private void flipDiscs(ArrayList<String> discsToFlip) {
 		for (int i = 0; i < discsToFlip.size(); i++) {
 			String key = discsToFlip.get(i);
@@ -272,25 +287,25 @@ public class Reversi {
 				black.remove(key);
 				white.put(key, disc);
 			}
-			if(disc.getColor() == "black") {
+			if (disc.getColor() == "black") {
 				buttons.get(key).setBackground(Color.BLACK);
 			} else {
-				buttons.get(key).setBackground(Color.WHITE);			
+				buttons.get(key).setBackground(Color.WHITE);
 			}
 		}
 	}
-	
-	private ArrayList<String> update(Disc core, int addToX, int addToY){
+
+	private ArrayList<String> update(Disc core, int addToX, int addToY) {
 		ArrayList<String> discsToFlip = new ArrayList<String>();
 		int x = core.getX() + addToX;
 		int y = core.getY() + addToY;
 		boolean foundDiff = false;
 		boolean flip = false;
-		String key = letters[y] + "" + x; 
+		String key = letters[y] + "" + x;
 		while (!outOfBounds(x, y) && field.get(key) != null) {
 			Disc next = field.get(key);
 			foundDiff = !next.getColor().equals(core.getColor());
-			if(foundDiff) {
+			if (foundDiff) {
 				discsToFlip.add(key);
 			} else {
 				flip = true;
@@ -300,24 +315,24 @@ public class Reversi {
 			y = y + addToY;
 			key = letters[y] + "" + x;
 		}
-		if(flip) {
+		if (flip) {
 			flipDiscs(discsToFlip);
 		} else {
 			discsToFlip.clear();
 		}
 		return discsToFlip;
 	}
-	
+
 	public ArrayList<String> updateBoard(Disc core) {
 		ArrayList<String> flippedDiscs = new ArrayList<String>();
-		flippedDiscs.addAll(update(core, 1, 0)); //down
-		flippedDiscs.addAll(update(core, -1, 0)); //up
-		flippedDiscs.addAll(update(core, 0, 1)); //right
-		flippedDiscs.addAll(update(core, 0, -1)); //left
-		flippedDiscs.addAll(update(core, 1, 1)); //down right
-		flippedDiscs.addAll(update(core, -1, -1)); //up left
-		flippedDiscs.addAll(update(core, -1, 1)); //down left
-		flippedDiscs.addAll(update(core, 1, -1)); //up right 
+		flippedDiscs.addAll(update(core, 1, 0)); // down
+		flippedDiscs.addAll(update(core, -1, 0)); // up
+		flippedDiscs.addAll(update(core, 0, 1)); // right
+		flippedDiscs.addAll(update(core, 0, -1)); // left
+		flippedDiscs.addAll(update(core, 1, 1)); // down right
+		flippedDiscs.addAll(update(core, -1, -1)); // up left
+		flippedDiscs.addAll(update(core, -1, 1)); // down left
+		flippedDiscs.addAll(update(core, 1, -1)); // up right
 		return flippedDiscs;
 	}
 
@@ -337,7 +352,7 @@ public class Reversi {
 			return true;
 		}
 	}
-	
+
 	private boolean outOfBounds(int x, int y) {
 		int rows = 8;
 		int columns = 8;
@@ -345,15 +360,15 @@ public class Reversi {
 			return true;
 		return false;
 	}
-	
+
 	public void blackPlayer(Player p1) {
 		this.p1 = p1;
 	}
-	
+
 	public void whitePlayer(Player p2) {
 		this.p2 = p2;
 	}
-	
+
 	public void triggerMove(Player p) {
 		updateAvailableMoves();
 		if (p != null && !simulation)
@@ -363,21 +378,21 @@ public class Reversi {
 	public int getNbrOfBlack() {
 		return black.size();
 	}
-	
+
 	public int getNbrOfWhite() {
 		return white.size();
 	}
-	
+
 	public ArrayList<String> getAvailableMoves() {
 		updateAvailableMoves();
 		return availableMoves;
 	}
-	
+
 	private void removeLastMove() {
 		int index = movesMade.size() - 1;
 		Move move = movesMade.remove(index);
 		String name = move.name;
-//		System.out.println("Removing " + name);
+		// System.out.println("Removing " + name);
 		field.remove(name);
 		if (black.containsKey(name)) {
 			black.remove(name);
@@ -387,18 +402,20 @@ public class Reversi {
 		JButton button = buttons.get(name);
 		button.setBackground(Color.GREEN);
 		flipDiscs(move.flippedDiscs);
-		turnCount++;
+		switchTurn();
 		if (turnCount % 2 == 0 && !simulation) {
-			System.out.println("Next is: black (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
-			triggerMove(p1);		
+			System.out
+					.println("Next is: black (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
+			triggerMove(p1);
 		} else if ((turnCount % 2 == 1 && !simulation)) {
-			System.out.println("Next is: white (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
+			System.out
+					.println("Next is: white (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
 			triggerMove(p2);
 		}
 	}
-	
+
 	public void revert(String move) {
-//		System.out.println("reverting " + move);
+		// System.out.println("reverting " + move);
 		Move m = new Move(move, null);
 		if (movesMade.contains(m)) {
 			String lastMove = movesMade.get(movesMade.size() - 1).name;
@@ -407,25 +424,24 @@ public class Reversi {
 				lastMove = movesMade.get(movesMade.size() - 1).name;
 			}
 			removeLastMove();
-			updateAvailableMoves();
 		} else {
 			if (!simulation)
 				System.out.println(move + " is not a move that has been made!");
 		}
 	}
-	
+
 	public String getBoxColor(String box) {
 		return field.get(box).getColor();
 	}
-	
+
 	public void setSimulationMode(boolean mode) {
 		simulation = mode;
 	}
-	
+
 	public String getCurrentPlayerColor() {
 		return turnCount % 2 == 0 ? "black" : "white";
 	}
-	
+
 	public void switchTurn() {
 		if (turnCount % 2 == 0) {
 			turnCount = 1;
@@ -434,7 +450,7 @@ public class Reversi {
 		}
 		updateAvailableMoves();
 	}
-	
+
 	public static void start() {
 		JDialog dialog = new JDialog();
 		dialog.setLocationRelativeTo(null);
@@ -451,7 +467,7 @@ public class Reversi {
 		panelList[0].add(startLabel);
 		JLabel blackPlayerLabel = new JLabel("Black discs ");
 		blackPlayerLabel.setFont(font);
-		String[] players = new String[] {"Human", "Random plays", "AI"};
+		String[] players = new String[] { "Human", "Random plays", "AI" };
 		JComboBox<String> box1 = new JComboBox<String>(players);
 		box1.setFont(font);
 		panelList[1].add(blackPlayerLabel);
@@ -467,20 +483,20 @@ public class Reversi {
 		panelList[3].add(depthLabel);
 		JTextField depthJta = new JTextField();
 		depthJta.setFont(font);
-		depthJta.setPreferredSize(new Dimension(90,40));
+		depthJta.setPreferredSize(new Dimension(90, 40));
 		panelList[3].add(depthJta);
-		
+
 		JButton startButton = new JButton("Start");
 		startButton.setFont(font);
 		panelList[4].add(startButton);
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(5,1));
+		panel.setLayout(new GridLayout(5, 1));
 		for (int i = 0; i < panelList.length; i++)
 			panel.add(panelList[i]);
 		dialog.add(panel);
 		dialog.pack();
 		dialog.setVisible(true);
-		startButton.addActionListener(new ActionListener(){
+		startButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
@@ -489,16 +505,16 @@ public class Reversi {
 					Player p2 = null;
 					String player1 = (String) box1.getSelectedItem();
 					String player2 = (String) box2.getSelectedItem();
-					Reversi reversi = new Reversi();	
-					
+					Reversi reversi = new Reversi();
+
 					if (player1.equals("Random plays")) {
-						p1 = new RandomPlays(reversi);						
+						p1 = new RandomPlays(reversi);
 					} else if (player1.equals("AI")) {
 						int depth = Integer.parseInt(depthJta.getText());
 						p1 = new AI(reversi, depth, "black");
 					}
 					if (player2.equals("Random plays")) {
-						p2 = new RandomPlays(reversi);						
+						p2 = new RandomPlays(reversi);
 					} else if (player2.equals("AI")) {
 						int depth = Integer.parseInt(depthJta.getText());
 						p2 = new AI(reversi, depth, "white");
@@ -516,10 +532,10 @@ public class Reversi {
 				} catch (Exception e) {
 					start();
 				}
-			}			
+			}
 		});
 	}
-	
+
 	public static void manualSetup() {
 		Reversi reversi = new Reversi();
 		reversi.createField();
@@ -531,17 +547,17 @@ public class Reversi {
 		reversi.allowAllMoves(false);
 		Player p1 = null;
 		Player p2 = null;
-		p1 = new AI(reversi, 2, "black");
-//		p1 = new RandomPlays(reversi);
-//		p2 = new AI(reversi, 4);
+		p1 = new AI(reversi, 4, "black");
+		// p1 = new RandomPlays(reversi);
+//		p2 = new AI(reversi, 5, "white");
 		p2 = new RandomPlays(reversi);
 		reversi.blackPlayer(p1);
 		reversi.whitePlayer(p2);
 		reversi.triggerMove(p1);
 	}
-	
+
 	public static void main(String[] args) {
-//		start();
+		// start();
 		manualSetup();
 	}
 }

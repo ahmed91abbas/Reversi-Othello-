@@ -19,11 +19,9 @@ public class AI implements Player {
 //		 System.out.println(node + " " + depth + " " + reversi.getCurrentPlayerColor());
 		if (depth == 0 || reversi.gameOver) {
 			if (this.color.equals("black")) {
-//				return reversi.getNbrOfBlack() / ((double) reversi.getNbrOfBlack() + reversi.getNbrOfWhite());
-				return reversi.getNbrOfBlack();
+				return reversi.getNbrOfBlack() / ((double) reversi.getNbrOfBlack() + reversi.getNbrOfWhite());
 			} else {
-//				return reversi.getNbrOfWhite() / ((double) reversi.getNbrOfBlack() + reversi.getNbrOfWhite());
-				return reversi.getNbrOfWhite();
+				return reversi.getNbrOfWhite() / ((double) reversi.getNbrOfBlack() + reversi.getNbrOfWhite());
 			}
 		}
 		
@@ -92,6 +90,11 @@ public class AI implements Player {
 				currentMax = point;
 				bestMove = key;
 			}
+		}
+		
+		if(!reversi.getCurrentPlayerColor().equals(this.color)) {
+			reversi.switchTurn();
+			reversi.gameOver = false;
 		}
 		reversi.setSimulationMode(false);
 		reversi.makeMove(bestMove);
