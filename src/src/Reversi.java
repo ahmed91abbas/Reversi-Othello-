@@ -547,10 +547,10 @@ public class Reversi {
 		reversi.allowAllMoves(false);
 		Player p1 = null;
 		Player p2 = null;
-		p1 = new AI(reversi, 4, "black");
+		p1 = new AI(reversi, 5, "black");
 		// p1 = new RandomPlays(reversi);
-//		p2 = new AI(reversi, 5, "white");
-		p2 = new RandomPlays(reversi);
+		p2 = new AI(reversi, 0, "white");
+//		p2 = new RandomPlays(reversi);
 		reversi.blackPlayer(p1);
 		reversi.whitePlayer(p2);
 		reversi.triggerMove(p1);

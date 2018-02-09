@@ -15,7 +15,7 @@ public class AI implements Player {
 		this.color = color;
 	}
 
-	private double minimax(String node, int depth) {
+	private double minimax(String node, int depth, double alpha, double beta) {
 //		 System.out.println(node + " " + depth + " " + reversi.getCurrentPlayerColor());
 		if (depth == 0 || reversi.gameOver) {
 			if (this.color.equals("black")) {
@@ -41,10 +41,12 @@ public class AI implements Player {
 					String prev = availableMoves.get(i - 1);
 					reversi.revert(prev);
 				}
-				double v = minimax(move, depth - 1);
-				bestValue = Math.max(bestValue, v);
+				bestValue = Math.max(bestValue, minimax(move, depth - 1, alpha, beta));
+				alpha = Math.max(alpha, bestValue);
 				if (i == (availableMoves.size() - 1))
 					reversi.revert(availableMoves.get(i));
+				if (beta <= alpha)
+					break;
 			}
 			return bestValue;
 		} else {
@@ -56,10 +58,12 @@ public class AI implements Player {
 					String prev = availableMoves.get(i - 1);
 					reversi.revert(prev);
 				}
-				double v = minimax(move, depth - 1);
-				bestValue = (double) Math.min(bestValue, v);
+				bestValue = Math.min(bestValue, minimax(move, depth - 1, alpha, beta));
+				beta = Math.min(beta, bestValue);
 				if (i == (availableMoves.size() - 1))
 					reversi.revert(availableMoves.get(i));
+				if (beta <= alpha)
+					break;
 			}
 			return bestValue;
 		}
@@ -67,6 +71,8 @@ public class AI implements Player {
 
 	@Override
 	public void makeMove(ArrayList<String> original) {
+		double alpha = Double.MIN_VALUE;
+		double beta = Double.MAX_VALUE;
 		reversi.setSimulationMode(true);
 		HashMap<String, Double> pointsOfMoves = new HashMap<String, Double>();
 		ArrayList<String> availableMoves = copy(original);
@@ -76,7 +82,7 @@ public class AI implements Player {
 				String prev = availableMoves.get(i - 1);
 				reversi.revert(prev);
 			}
-			double point = minimax(move, depth);
+			double point = minimax(move, depth, alpha, beta);
 			pointsOfMoves.put(move, point);
 			if (i == availableMoves.size() - 1)
 				reversi.revert(availableMoves.get(i));
