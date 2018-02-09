@@ -32,6 +32,7 @@ public class Reversi {
 	protected boolean gameOver;
 	private ArrayList<Move> movesMade;
 	private boolean simulation;
+	private boolean resultPrinted;
 
 	public Reversi() {
 		turnCount = 0;
@@ -50,6 +51,7 @@ public class Reversi {
 		p2 = null;
 		movesMade = new ArrayList<Move>();
 		simulation = false;
+		resultPrinted = false;
 	}
 
 	public void allowAllMoves(boolean state) {
@@ -88,7 +90,7 @@ public class Reversi {
 				switchTurn();
 			}
 
-			if (gameOver && !simulation) {
+			if (gameOver && !simulation && !resultPrinted) {
 				if (blackDiscs > whiteDiscs) {
 					System.out.println("\nThe winner is BLACK!");
 				} else if (whiteDiscs > blackDiscs) {
@@ -98,6 +100,7 @@ public class Reversi {
 				}
 				System.out.println("Black scored " + blackDiscs + " points.");
 				System.out.println("White scored " + whiteDiscs + " points.");
+				resultPrinted = true;
 			}
 
 			if (!allowAllMoves && !gameOver && !simulation) {
@@ -108,9 +111,6 @@ public class Reversi {
 					p2.makeMove(availableMoves);
 				}
 			}
-
-		} else {
-			System.out.println(getCurrentPlayerColor() + " failed to make move " + name);
 		}
 	}
 
@@ -244,12 +244,13 @@ public class Reversi {
 			}
 		} else if (!allowAllMoves && !gameOver) {
 			if (!whiteHasMoves && !blackHasMoves) {
-				if (!simulation) {
+				if (!simulation && !resultPrinted) {
 					System.out.println("\nThe game has finished because both players has no available moves left!");
 					String winner = black.size() > white.size() ? "BLACK" : "WHITE";
 					System.out.println("\nThe winner is " + winner);
 					System.out.println("Black scored " + black.size() + " points.");
 					System.out.println("White scored " + white.size() + " points.");
+					resultPrinted = true;
 				}
 				gameOver = true;
 			} else if (playerID == 0) {
@@ -549,17 +550,17 @@ public class Reversi {
 		reversi.allowAllMoves(false);
 		Player p1 = null;
 		Player p2 = null;
-		p1 = new AI(reversi, 5, "black");
+		p1 = new AI(reversi, 4, "black");
 		// p1 = new RandomPlays(reversi);
-		p2 = new AI(reversi, 0, "white");
-		// p2 = new RandomPlays(reversi);
+		// p2 = new AI(reversi, 0, "white");
+		p2 = new RandomPlays(reversi);
 		reversi.blackPlayer(p1);
 		reversi.whitePlayer(p2);
 		reversi.triggerMove(p1);
 	}
 
 	public static void main(String[] args) {
-		 start();
-//		manualSetup();
+		start();
+		// manualSetup();
 	}
 }
