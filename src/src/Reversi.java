@@ -76,7 +76,8 @@ public class Reversi {
 			}
 			
 			if (blackDiscs + whiteDiscs == 64) {
-				clearAvailableMoves();
+				if(!simulation)
+					clearAvailableMoves();
 				gameOver = true;
 			}
 			
@@ -85,7 +86,6 @@ public class Reversi {
 					System.out.println("Next is: " + nextPlayer + " (Black discs = " + blackDiscs + ", White discs = " + whiteDiscs + ")");
 				turnCount++;
 			}
-			
 			
 			if (gameOver) {
 				if (blackDiscs > whiteDiscs) {
@@ -108,7 +108,9 @@ public class Reversi {
 				}
 			}	
 			
-		} 
+		} else {
+			System.out.println(getCurrentPlayerColor() + " failed to make move " + name);
+		}
 	}
 
 	private JButton createButton(final String name) {
@@ -243,14 +245,16 @@ public class Reversi {
 				blackHasMoves = false;
 				System.out.println("\nPlayer Black has no available moves! Switching turns");
 				System.out.println("Next is: white (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
-				turnCount++;
-				triggerMove(p2);
+				switchTurn();
+				if(!simulation)
+					triggerMove(p2);
 			} else if (playerID == 1) {
 				whiteHasMoves = false;
 				System.out.println("\nPlayer White has no available moves! Switching turns");
 				System.out.println("Next is: black (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
-				turnCount++;
-				triggerMove(p1);
+				switchTurn();
+				if(!simulation)
+					triggerMove(p1);
 			}
 		}
 	}
@@ -365,6 +369,7 @@ public class Reversi {
 	}
 	
 	public ArrayList<String> getAvailableMoves() {
+		updateAvailableMoves();
 		return availableMoves;
 	}
 	
@@ -402,6 +407,7 @@ public class Reversi {
 				lastMove = movesMade.get(movesMade.size() - 1).name;
 			}
 			removeLastMove();
+			updateAvailableMoves();
 		} else {
 			if (!simulation)
 				System.out.println(move + " is not a move that has been made!");
@@ -418,6 +424,15 @@ public class Reversi {
 	
 	public String getCurrentPlayerColor() {
 		return turnCount % 2 == 0 ? "black" : "white";
+	}
+	
+	public void switchTurn() {
+		if (turnCount % 2 == 0) {
+			turnCount = 1;
+		} else {
+			turnCount = 0;
+		}
+		updateAvailableMoves();
 	}
 	
 	public static void start() {
@@ -516,7 +531,7 @@ public class Reversi {
 		reversi.allowAllMoves(false);
 		Player p1 = null;
 		Player p2 = null;
-		p1 = new AI(reversi, 3, "black");
+		p1 = new AI(reversi, 2, "black");
 //		p1 = new RandomPlays(reversi);
 //		p2 = new AI(reversi, 4);
 		p2 = new RandomPlays(reversi);
