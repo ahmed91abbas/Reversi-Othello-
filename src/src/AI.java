@@ -87,7 +87,7 @@ public class AI implements Player {
 			if (i == availableMoves.size() - 1)
 				reversi.revert(availableMoves.get(i));
 		}
-		System.out.println(pointsOfMoves.toString());
+//		System.out.println(pointsOfMoves.toString());
 		String bestMove = "";
 		double currentMax = -1;
 		for (String key : pointsOfMoves.keySet()) {

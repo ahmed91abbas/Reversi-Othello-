@@ -244,29 +244,31 @@ public class Reversi {
 			}
 		} else if (!allowAllMoves && !gameOver) {
 			if (!whiteHasMoves && !blackHasMoves) {
-				System.out.println("\nThe game has finished because both players has no available moves left!");
-				String winner = black.size() > white.size() ? "BLACK" : "WHITE";
-				System.out.println("\nThe winner is " + winner);
-				System.out.println("Black scored " + black.size() + " points.");
-				System.out.println("White scored " + white.size() + " points.");
+				if (!simulation) {
+					System.out.println("\nThe game has finished because both players has no available moves left!");
+					String winner = black.size() > white.size() ? "BLACK" : "WHITE";
+					System.out.println("\nThe winner is " + winner);
+					System.out.println("Black scored " + black.size() + " points.");
+					System.out.println("White scored " + white.size() + " points.");
+				}
 				gameOver = true;
 			} else if (playerID == 0) {
 				blackHasMoves = false;
-				System.out.println("\nPlayer Black has no available moves! Switching turns");
-				System.out.println(
-						"Next is: white (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
-
 				if (!simulation) {
+					System.out.println("\nPlayer Black has no available moves! Switching turns");
+					System.out.println(
+							"Next is: white (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
+
 					switchTurn();
 					triggerMove(p2);
 				}
 			} else if (playerID == 1) {
 				whiteHasMoves = false;
-				System.out.println("\nPlayer White has no available moves! Switching turns");
-				System.out.println(
-						"Next is: black (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
-				
 				if (!simulation) {
+					System.out.println("\nPlayer White has no available moves! Switching turns");
+					System.out.println(
+							"Next is: black (Black discs = " + black.size() + ", White discs = " + white.size() + ")");
+
 					switchTurn();
 					triggerMove(p1);
 				}
@@ -550,14 +552,14 @@ public class Reversi {
 		p1 = new AI(reversi, 5, "black");
 		// p1 = new RandomPlays(reversi);
 		p2 = new AI(reversi, 0, "white");
-//		p2 = new RandomPlays(reversi);
+		// p2 = new RandomPlays(reversi);
 		reversi.blackPlayer(p1);
 		reversi.whitePlayer(p2);
 		reversi.triggerMove(p1);
 	}
 
 	public static void main(String[] args) {
-		// start();
-		manualSetup();
+		 start();
+//		manualSetup();
 	}
 }
